@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberGuard Enterprise // Advanced HTTP Headers & CSP Auditor</title>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Enterprise Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="enterprise-theme">
+    <!-- Top Navigation / Enterprise Header -->
+    <header class="enterprise-header">
+        <div class="header-container">
+            <div class="brand-cluster">
+                <div class="brand-logo-icon">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div>
+                    <h1 class="brand-title">CYBERGUARD ENTERPRISE</h1>
+                    <p class="brand-subtitle">Advanced HTTP Headers & CSP Security Intelligence Engine</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <div class="system-status-badge">
+                    <span class="status-dot"></span>
+                    <span>ENGINE ONLINE // OWASP v10.4</span>
+                </div>
+                <button id="btnExport" class="btn-enterprise btn-secondary" title="Exportar Reporte Ejecutivo">
+                    <i class="fa-solid fa-file-pdf"></i> Exportar Reporte
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard Container -->
+    <main class="dashboard-main">
+        <!-- Input & Control Hub -->
+        <section class="control-hub card-enterprise">
+            <div class="hub-tabs">
+                <button class="tab-btn active" data-target="url-mode">
+                    <i class="fa-solid fa-globe"></i> Análisis de URL Objetivo
+                </button>
+                <button class="tab-btn" data-target="raw-mode">
+                    <i class="fa-solid fa-code"></i> Análisis Estático (Raw Headers)
+                </button>
+            </div>
+
+            <!-- Mode 1: Live URL Target -->
+            <div id="url-mode" class="hub-panel active">
+                <div class="input-row">
+                    <div class="url-input-wrapper">
+                        <span class="input-prefix">https://</span>
+                        <input type="text" id="targetUrlInput" placeholder="ej. example.com o api.enterprise.org/v1" class="enterprise-input" autocomplete="off" spellcheck="false">
+                    </div>
+                    <button id="btnScanUrl" class="btn-enterprise btn-primary">
+                        <i class="fa-solid fa-radar"></i> Ejecutar Auditoría
+                    </button>
+                </div>
+                <div class="quick-presets">
+                    <span class="preset-label">Presets de Prueba:</span>
+                    <button class="preset-chip" data-preset="secure">🛡️ Banco Seguro (A+)</button>
+                    <button class="preset-chip" data-preset="vulnerable">⚠️ Legacy App (F)</button>
+                    <button class="preset-chip" data-preset="api">⚡ Microservice Gateway (B)</button>
+                </div>
+                <div id="corsNotice" class="cors-notice hidden">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span>Nota CORS del navegador: Para dominios externos sin cabeceras Access-Control-Allow-Origin, el motor activará automáticamente la simulación avanzada o el análisis proxy integrado. También puedes usar el modo Raw para pegar cabeceras de cURL.</span>
+                </div>
+            </div>
+
+            <!-- Mode 2: Raw HTTP Headers -->
+            <div id="raw-mode" class="hub-panel">
+                <div class="textarea-wrapper">
+                    <label for="rawHeadersInput" class="textarea-label">Pega la respuesta HTTP cruda (ej. output de `curl -I` o Developer Tools):</label>
+                    <textarea id="rawHeadersInput" rows="7" class="enterprise-textarea font-mono" placeholder="HTTP/1.1 200 OK&#10;Date: Tue, 03 Nov 2026 12:00:00 GMT&#10;Server: nginx&#10;Strict-Transport-Security: max-age=31536000; includeSubDomains&#10;Content-Security-Policy: default-src 'self'"></textarea>
+                </div>
+                <div class="raw-actions">
+                    <button id="btnScanRaw" class="btn-enterprise btn-primary">
+                        <i class="fa-solid fa-microchip"></i> Analizar Cabeceras Crudas
+                    </button>
+                    <button id="btnLoadSampleRaw" class="btn-enterprise btn-text">
+                        <i class="fa-solid fa-file-lines"></i> Cargar Muestra Típica
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Executive Summary Scorecard -->
+        <section id="scorecardSection" class="scorecard-grid hidden">
+            <!-- Overall Grade Card -->
+            <div class="card-enterprise grade-card">
+                <div class="grade-header">
+                    <h3>Calificación Global de Riesgo</h3>
+                    <span class="badge-audit" id="auditTimestamp">Auditado: Ahora</span>
+                </div>
+                <div class="grade-body">
+                    <div id="gradeBadge" class="grade-badge grade-a">A+</div>
+                    <div class="grade-metrics">
+                        <div class="metric-item">
+                            <span class="metric-label">Puntuación de Seguridad</span>
+                            <span class="metric-value" id="scoreValue">98 / 100</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Nivel de Exposición</span>
+                            <span class="metric-value text-success" id="exposureValue">Mínimo / Conforme</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Header Counters Card -->
+            <div class="card-enterprise counters-card">
+                <h3>Resumen de Controles OWASP</h3>
+                <div class="counters-grid">
+                    <div class="counter-box passed">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span class="count-num" id="passedCount">7</span>
+                        <span class="count-label">Conformes</span>
+                    </div>
+                    <div class="counter-box warning">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <span class="count-num" id="warningCount">0</span>
+                        <span class="count-label">Advertencias</span>
+                    </div>
+                    <div class="counter-box danger">
+                        <i class="fa-solid fa-circle-xmark"></i>
+                        <span class="count-num" id="criticalCount">0</span>
+                        <span class="count-label">Críticos / Ausentes</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Detailed Findings & CSP Section -->
+        <div id="resultsContent" class="results-container hidden">
+            <!-- Left Column: Detailed Security Headers -->
+            <section class="findings-section">
+                <div class="section-header">
+                    <h2><i class="fa-solid fa-list-check"></i> Auditoría Detallada de Cabeceras HTTP</h2>
+                    <span class="subtext">Evaluadas contra las pautas OWASP Secure Headers Project</span>
+                </div>
+                <div id="headersList" class="headers-grid">
+                    <!-- Dynamic Header Cards injected here -->
+                </div>
+            </section>
+
+            <!-- Right Column: CSP Deep Inspector & Executive Remediation -->
+            <aside class="sidebar-section">
+                <!-- CSP Deep Analysis Card -->
+                <div class="card-enterprise csp-inspector-card">
+                    <div class="card-section-header">
+                        <h3><i class="fa-solid fa-shield-cat"></i> Auditor Profundo de CSP</h3>
+                        <span id="cspStatusBadge" class="badge-status badge-success">Óptimo</span>
+                    </div>
+                    <div id="cspAnalysisContent" class="csp-content">
+                        <!-- Dynamic CSP analysis results -->
+                    </div>
+                </div>
+
+                <!-- Remediation Code Generator Card -->
+                <div class="card-enterprise remediation-card">
+                    <div class="card-section-header">
+                        <h3><i class="fa-solid fa-code-merge"></i> Remediación Ejecutiva (Snippets)</h3>
+                        <div class="server-tabs">
+                            <button class="server-tab active" data-server="nginx">Nginx</button>
+                            <button class="server-tab" data-server="apache">Apache</button>
+                            <button class="server-tab" data-server="cloudflare">Cloudflare</button>
+                        </div>
+                    </div>
+                    <div class="code-output-container">
+                        <div class="code-header-bar">
+                            <span id="serverTitle" class="server-title">nginx.conf</span>
+                            <button id="btnCopyCode" class="btn-copy" title="Copiar al portapapeles">
+                                <i class="fa-solid fa-copy"></i> Copiar Código
+                            </button>
+                        </div>
+                        <pre><code id="remediationCodeBlock" class="font-mono"># Seleccione un objetivo para generar la configuración optimizada.</code></pre>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="enterprise-footer">
+        <p>CyberGuard Enterprise Security Suite &copy; 2026 // Arquitectura de Ciberseguridad Corporativa &amp; OWASP Compliance</p>
+    </footer>
+
+    <!-- Core Security Engine & App Controllers -->
+    <script src="securityEngine.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
